@@ -1,0 +1,136 @@
+---
+/**
+ * Dentist.astro — full dentist website template.
+ *
+ * Pass a `client` object fetched from your API and every section renders
+ * dynamic data. Omit it (or pass nothing) and every section uses its
+ * hardcoded defaults — so index.astro can just do <DentistTemplate />.
+ *
+ * Client fields consumed across sections:
+ *   business_name, city, state, phone, tagline, feature_bars,
+ *   hero_image, gallery_image, section3_img1, section3_img2, section3_bg,
+ *   services (array)
+ */
+import Layout from '../../layouts/Layout.astro';
+import SplashScreen from '../SplashScreen.astro';
+import Section1 from '../Section1.astro';
+import Section2 from '../Section2.astro';
+import Section3 from '../Section3.astro';
+
+interface Props {
+  client?: Record<string, any>;
+}
+
+const { client } = Astro.props;
+---
+
+<Layout client={client}>
+  <SplashScreen />
+
+  <main class="bg-white">
+    <Section1 client={client} />
+    <Section2 client={client} />
+    <Section3 client={client} />
+  </main>
+</Layout>
+
+<script>
+  const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:5001' : '';
+
+  let appInitialized = false;
+
+  function initApp() {
+    if (appInitialized) return;
+    appInitialized = true;
+    setupBackgroundMasks();
+    setupScrollReveals();
+  }
+
+  function setupBackgroundMasks() {
+    const maskedSections = document.querySelectorAll('section[data-bg-image]');
+
+    maskedSections.forEach((sectionElement) => {
+      const section = sectionElement as HTMLElement;
+      const bgImage = section.getAttribute('data-bg-image');
+      if (!bgImage) return;
+      if (section.dataset.maskInit === 'true') return;
+      section.dataset.maskInit = 'true';
+
+      const img = new Image();
+      img.src = bgImage;
+
+      img.onload = () => {
+        const naturalWidth = img.naturalWidth;
+        const naturalHeight = img.naturalHeight;
+
+        const updatePositions = () => {
+          const sw = section.offsetWidth;
+          const sh = section.offsetHeight;
+          const imageWidth = naturalWidth * (sh / naturalHeight);
+          const overflow = imageWidth > sw ? imageWidth - sw : 0;
+          const isMobile = window.innerWidth < 768;
+          const focalKey = isMobile ? 'data-focal-x-mobile' : 'data-focal-x-desktop';
+          const focalX = parseFloat(section.getAttribute(focalKey) || '0.8');
+          const focalOffset = overflow * focalX;
+
+          const cards = section.querySelectorAll('.masked-card');
+          cards.forEach((cardElement) => {
+            const card = cardElement as HTMLElement;
+            const cardRect = card.getBoundingClientRect();
+            const sectionRect = section.getBoundingClientRect();
+            const x = cardRect.left - sectionRect.left;
+            const y = cardRect.top - sectionRect.top;
+            card.style.backgroundImage = `url('${bgImage}')`;
+            card.style.backgroundSize = `auto ${sh}px`;
+            card.style.backgroundPosition = `${-(x + focalOffset)}px ${-y}px`;
+            card.style.backgroundRepeat = 'no-repeat';
+          });
+        };
+
+        updatePositions();
+        const resizeObserver = new ResizeObserver(updatePositions);
+        resizeObserver.observe(section);
+      };
+    });
+  }
+
+  function setupScrollReveals() {
+    const revealContainers = document.querySelectorAll('.reveal-container');
+
+    revealContainers.forEach((container) => {
+      const items = container.querySelectorAll('.reveal-item');
+      items.forEach((item, idx) => {
+        (item as HTMLElement).style.transitionDelay = `${idx * 120}ms`;
+      });
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.12,
+      rootMargin: '0px',
+    });
+
+    revealContainers.forEach((c) => observer.observe(c));
+  }
+
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    if (target?.classList?.contains('book-trigger')) {
+      document.dispatchEvent(new CustomEvent('open-drawer', { detail: { target: 'booking' } }));
+    }
+  });
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+  } else {
+    initApp();
+  }
+
+  document.addEventListener('splash-complete', initApp);
+</script>

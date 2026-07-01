@@ -1,0 +1,100 @@
+---
+interface Props {
+  client?: {
+    business_name?: string;
+    city?: string;
+    state?: string;
+    phone?: string;
+    hero_image?: string;
+    tagline?: string;
+    feature_bars?: string[];
+  };
+}
+
+const { client } = Astro.props;
+const businessName = client?.business_name ?? "Dental Care";
+const [first, ...rest] = businessName.split(" ");
+
+// Fallbacks — same values your homepage used to hardcode
+const HERO_IMAGE =
+  client?.hero_image ??
+  "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260624_113640_ccf3cf97-d447-425b-a134-d7b09fc743fc.png&w=1280&q=85";
+
+const featureBars: string[] =
+  client?.feature_bars ?? [
+    "Advanced Dentistry",
+    "High Quality Equipment",
+    "Friendly Staff",
+  ];
+
+const locationLabel =
+  client?.city && client?.state
+    ? `Trusted Dentist in ${client.city}, ${client.state}`
+    : "Trusted Dentist in West New York";
+---
+
+<section
+  id="home"
+  class="reveal-container h-screen w-full overflow-hidden flex flex-col pt-24 md:pt-24 px-3 md:px-5 pb-1.5 md:pb-2 gap-1.5 md:gap-2 select-none"
+  data-focal-x-mobile="0.7"
+  data-focal-x-desktop="0.8"
+  data-bg-image={HERO_IMAGE}
+>
+  <!-- Feature Bars -->
+  {
+    featureBars.map((text, index) => (
+      <div
+        class="reveal-item masked-card w-full h-14 md:h-20 shrink-0 rounded-xl md:rounded-2xl overflow-hidden relative"
+        data-card-index={index}
+      >
+        <span class="flex items-center justify-center h-full text-black text-lg md:text-3xl font-bold text-center relative z-10 px-4">
+          {text}
+        </span>
+      </div>
+    ))
+  }
+
+  <!-- Main Hero Card -->
+  <div
+    class="reveal-item masked-card w-full flex-1 min-h-0 rounded-xl md:rounded-2xl overflow-hidden relative"
+    data-card-index="3"
+  >
+    <!-- Top Left Description -->
+    <div
+      class="absolute top-4 left-4 md:top-1 md:left-7 text-black text-xs md:text-sm font-semibold leading-4 md:leading-5 max-w-[160px] md:max-w-[220px] z-10 ml-2"
+    >
+      {client?.tagline ?? "We wish to provide professional dental services\u00a0that match the current technologies"}
+    </div>
+
+    <!-- Bottom Left Heading Block -->
+    <div class="absolute bottom-5 left-4 md:bottom-8 md:left-7 z-10">
+      <span
+        class="block text-black text-[10px] md:text-xs font-semibold mb-1 md:mb-2 uppercase tracking-wide opacity-80 ml-2"
+      >
+        {locationLabel}
+      </span>
+      <h1
+        class="text-black text-[clamp(3rem,11vw,11rem)] font-bold leading-[0.79] tracking-tight"
+      >
+        {first}<br />{rest.join(" ")}
+      </h1>
+    </div>
+
+    <!-- Bottom Right CTA -->
+    <div
+      class="absolute bottom-6 right-4 md:bottom-10 md:right-7 z-10 flex flex-col items-end gap-3"
+    >
+      <span
+        class="text-white text-[10px] md:text-xs font-semibold uppercase tracking-wider bg-black/50 px-3 py-1.5 rounded-full backdrop-blur-sm select-text"
+      >
+        Free Consultation
+      </span>
+      <button
+        class="book-trigger px-5 py-3 md:px-8 md:py-5 bg-white text-black text-sm md:text-base font-bold rounded-full hover:scale-105 transition-transform duration-200 shadow-md cursor-pointer"
+        aria-label="Book Appointment Now"
+      >
+        Book Appointment
+      </button>
+    </div>
+  </div>
+</section>

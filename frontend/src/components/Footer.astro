@@ -1,0 +1,151 @@
+---
+interface Props {
+  client?: Record<string, any>;
+}
+
+const { client } = Astro.props;
+
+const base = client?.slug ? `/${client.slug}` : '';
+
+const businessName: string = client?.business_name ?? 'Dental Health';
+const nameParts = businessName.trim().split(/\s+/);
+const nameLine1 = nameParts[0];
+const nameLine2 = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+
+const description: string =
+  client?.description ??
+  'Premium dental care in West New York, NJ. Combining clinical excellence with a stress-free patient experience.';
+
+const phone: string = client?.phone ?? '+1 (555) 0199';
+const phoneHref = `tel:${(client?.phone ?? '+15550199').replace(/[^\d+]/g, '')}`;
+const email: string = client?.email ?? 'info@wnydentalhealth.com';
+const addressLine1: string = client?.address ?? '6000 Palisade Avenue';
+const addressLine2: string =
+  client?.city && client?.state
+    ? `${client.city}, ${client.state}${client?.zip ? ` ${client.zip}` : ''}`
+    : 'West New York, NJ 07093';
+
+const mapsQuery = client?.city && client?.state ? `${client.city},${client.state}` : 'West+New+York,NJ';
+const mapsUrl = client?.google_maps_url ?? `https://maps.google.com/?q=${mapsQuery}`;
+
+// Build a coordinate-based embed using the Google Maps Embed API when we
+// have real lat/lng for this client. Falls back to the original static
+// West New York embed when no client (main site) or no coordinates exist.
+const mapsEmbedSrc =
+  client?.google_maps_embed_url ??
+  `https://maps.google.com/maps?q=${encodeURIComponent(
+    client?.address || `${client?.latitude},${client?.longitude}`
+  )}&z=15&output=embed`;
+
+const facebookUrl: string | undefined = client?.facebook_url;
+
+const currentYear = new Date().getFullYear();
+---
+<footer id="main-footer" class="bg-black text-white mt-12 md:mt-20">
+  <div class="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-12 md:py-16">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-8">
+      
+      <!-- Brand Column -->
+      <div class="lg:col-span-1">
+        <div class="text-xl md:text-2xl font-extrabold uppercase tracking-tight leading-none mb-4">
+          <div>{nameLine1}</div>
+          {nameLine2 && <div class="-mt-1.5 md:-mt-2">{nameLine2}</div>}
+        </div>
+        <p class="text-neutral-400 text-xs md:text-sm leading-relaxed mt-4 max-w-xs">
+          {description}
+        </p>
+        {facebookUrl && (
+          <a
+            href={facebookUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 mt-5 text-neutral-400 hover:text-white transition-colors text-xs font-semibold"
+            aria-label={`${businessName} on Facebook`}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M22 12.06C22 6.51 17.52 2 12 2S2 6.51 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.5 1.49-3.89 3.78-3.89 1.1 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.45 2.91h-2.33V22c4.78-.76 8.44-4.92 8.44-9.94Z"/>
+            </svg>
+            Facebook
+          </a>
+        )}
+      </div>
+
+      <!-- Quick Links -->
+      <div>
+        <h3 class="text-xs font-extrabold uppercase tracking-wider mb-4 text-neutral-300">Quick Links</h3>
+        <ul class="space-y-3 text-sm">
+          <li><a href={base || '/'} class="text-neutral-400 hover:text-white transition-colors">Home</a></li>
+          <li><a href={`${base}/services`} class="text-neutral-400 hover:text-white transition-colors">Services</a></li>
+          <li><a href={`${base}/about`} class="text-neutral-400 hover:text-white transition-colors">About Us</a></li>
+          <li><a href={`${base}/team`} class="text-neutral-400 hover:text-white transition-colors">Our Team</a></li>
+          <li><a href={`${base}/contact`} class="text-neutral-400 hover:text-white transition-colors">Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Info -->
+      <div>
+        <h3 class="text-xs font-extrabold uppercase tracking-wider mb-4 text-neutral-300">Contact</h3>
+        <ul class="space-y-3 text-sm text-neutral-400">
+          <li>
+            <a href={phoneHref} class="hover:text-white transition-colors">{phone}</a>
+          </li>
+          <li>
+            <a href={`mailto:${email}`} class="hover:text-white transition-colors">{email}</a>
+          </li>
+          <li class="leading-relaxed">
+            {addressLine1}<br />
+            {addressLine2}
+          </li>
+        </ul>
+
+        <!-- Map Embed in Footer -->
+        <div class="mt-5">
+          <a href={mapsUrl} target="_blank" rel="noopener noreferrer" class="block text-neutral-300 hover:text-white transition-colors">
+            <div class="rounded-xl overflow-hidden h-36 border border-neutral-700 shadow-inner relative">
+              <iframe 
+                title="Clinic Location Map" 
+                src={mapsEmbedSrc}
+                class="w-full h-full border-0" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade"
+              ></iframe>
+              <div class="absolute bottom-2 left-2 bg-black/80 text-white text-[10px] font-bold px-2 py-1 rounded-full pointer-events-none">
+                View on Google Maps
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Business Hours -->
+      <div>
+        <h3 class="text-xs font-extrabold uppercase tracking-wider mb-4 text-neutral-300">Hours</h3>
+        <ul class="space-y-2 text-sm text-neutral-400">
+          <li class="flex justify-between">
+            <span>Mon - Fri</span>
+            <span class="text-neutral-300">{client?.hours_weekday ?? '8:00 AM - 6:00 PM'}</span>
+          </li>
+          <li class="flex justify-between">
+            <span>Saturday</span>
+            <span class="text-neutral-300">{client?.hours_saturday ?? '9:00 AM - 3:00 PM'}</span>
+          </li>
+          <li class="flex justify-between text-red-400">
+            <span>Sunday</span>
+            <span>{client?.hours_sunday ?? 'Closed'}</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="mt-12 pt-8 border-t border-neutral-800 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-neutral-500">
+      <p>&copy; {currentYear} {businessName}. All rights reserved.</p>
+      <div class="flex gap-6">
+        <a href={base || '/'} class="hover:text-white transition-colors">Privacy Policy</a>
+        <a href={base || '/'} class="hover:text-white transition-colors">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>

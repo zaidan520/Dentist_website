@@ -1,0 +1,192 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import DrawersContainer from "../../components/DrawersContainer.astro";
+import { getClientBySlug } from "../../lib/api";
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+const client = await getClientBySlug(slug);
+if (!client) {
+  return Astro.redirect("/404");
+}
+const templateClient = { slug, ...client };
+
+const clinicServices = [
+  {
+    key: "veneers",
+    title: "Porcelain Veneers",
+    description:
+      "Premium, ultra-thin custom shells of dental porcelain bonded to the front of teeth to completely redesign your smile's color, shape, alignment, and spacing.",
+    benefits: [
+      "Instantly corrects chipped, stained, or misaligned teeth",
+      "Stain-resistant materials that keep teeth permanently bright",
+      "Custom shade-matching for a stunning, natural-looking finish",
+      "Minimally invasive preparation preserving healthy enamel",
+    ],
+    duration: "120 mins (Across 2 appointments)",
+    image:
+      "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260624_114219_414dfe80-f15c-4e25-bf52-b13721f4bd88.png&w=600&q=85",
+  },
+  {
+    key: "crowns",
+    title: "Dental Crowns & Bridges",
+    description:
+      "Full-coverage porcelain crowns designed to restore damaged, weakened, or decayed teeth to their original size, strength, and premium aesthetic appearance.",
+    benefits: [
+      "Strengthens heavily decayed or post-root-canal teeth",
+      "Fills empty gaps using dental bridges linked to support crowns",
+      "Precision computer-milled (CAD/CAM) fit for perfect bite alignment",
+      "Fully bio-compatible metal-free ceramic options",
+    ],
+    duration: "90 mins (Across 2 appointments)",
+    image:
+      "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260624_115237_fc519057-6e87-4abf-999a-9610b8b085b4.png&w=600&q=85",
+  },
+  {
+    key: "whitening",
+    title: "Teeth Whitening",
+    description:
+      "Laser-activated medical teeth bleaching providing dramatic brightening of up to 8 shades in a single in-office visit.",
+    benefits: [
+      "In-office dental-grade whitening in under an hour",
+      "Removes deep staining from coffee, tea, smoking, and aging",
+      "Specially formulated desensitizing agents to prevent discomfort",
+      "Includes take-home touch-up whitening trays for maintenance",
+    ],
+    duration: "60 mins",
+    image:
+      "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260624_113640_ccf3cf97-d447-425b-a134-d7b09fc743fc.png&w=600&q=85",
+  },
+  {
+    key: "implants",
+    title: "Dental Implants",
+    description:
+      "State-of-the-art dental implants utilizing bio-compatible titanium root anchors to permanently restore missing teeth with natural strength and appearance.",
+    benefits: [
+      "Prevents jawbone shrinkage and structure loss from missing teeth",
+      "Restores full chewing power, allowing you to eat any food",
+      "No scraping or damage to surrounding healthy support teeth",
+      "Can support single crowns, dental bridges, or full-arch dentures",
+    ],
+    duration: "90 mins per implant site",
+    image:
+      "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260624_115253_c19ab167-8dd5-48b4-967d-b9f0d9d6e8fb.png&w=600&q=85",
+  },
+  {
+    key: "cleaning",
+    title: "Teeth Cleaning & Hygiene",
+    description:
+      "Comprehensive prophylactic scaling, stain removal, and gum maintenance to prevent periodontal disease and ensure pristine oral health.",
+    benefits: [
+      "Removes hardened calculus and plaque buildup standard brushing cannot clear",
+      "Detects early oral cavities, decay, and gum inflammation",
+      "Deep ultrasonic scaling with air-polishing stain removal",
+      "Fluoride varnish to strengthen enamel against daily acid decay",
+    ],
+    duration: "45 mins",
+    image:
+      "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260624_114355_752ba9e6-0942-4abb-9047-5d9bb16632e9.png&w=600&q=85",
+  },
+  {
+    key: "rootcanal",
+    title: "Root Canal Therapy",
+    description:
+      "Highly precise microscopic therapy designed to painlessly save severely infected or abscessed teeth from extraction, preserving your natural bite.",
+    benefits: [
+      "Eliminates severe toothache pain caused by internal pulp decay",
+      "Cleanses infected pulp chambers and seals them permanently",
+      "Preserves the natural tooth root structure in your jaw",
+      "Painless procedure performed under modern local anesthetics",
+    ],
+    duration: "75 mins",
+    image:
+      "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260624_115237_fc519057-6e87-4abf-999a-9610b8b085b4.png&w=600&q=85",
+  },
+];
+---
+
+<Layout client={templateClient}>
+  <DrawersContainer />
+
+  <main class="min-h-screen bg-white relative pt-24 md:pt-28">
+    <div
+      class="absolute inset-0 bg-gradient-to-b from-stone-50/60 via-white to-white pointer-events-none"
+    >
+    </div>
+    <div
+      class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-64 md:h-80 bg-[url('https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260624_114355_752ba9e6-0942-4abb-9047-5d9bb16632e9.png&w=1280&q=85')] bg-cover bg-center opacity-[0.03] pointer-events-none"
+    >
+    </div>
+    <div class="max-w-5xl mx-auto px-4 md:px-8 lg:px-12 py-16 md:py-4 relative">
+      <div class="text-center mb-16">
+        <span
+          class="text-xs font-extrabold text-neutral-400 uppercase tracking-widest"
+          >Expert Dental Care</span
+        >
+        <h1
+          class="text-4xl md:text-6xl font-bold text-black mt-4 leading-tight"
+        >
+          Our Dental Services
+        </h1>
+        <p
+          class="text-neutral-500 text-sm md:text-base mt-4 max-w-2xl mx-auto leading-relaxed"
+        >
+          From smile makeovers to restorative implantology, every treatment is
+          tailored to your unique needs using the latest technology.
+        </p>
+      </div>
+
+      <div class="space-y-16 md:space-y-24">
+        {
+          clinicServices.map((svc, idx) => (
+            <div
+              class={`flex flex-col ${idx % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"} gap-8 md:gap-12 items-center`}
+            >
+              <div class="w-full md:w-1/2 rounded-2xl overflow-hidden aspect-[4/3] md:aspect-auto md:h-[400px] shadow-sm">
+                <img
+                  src={svc.image}
+                  alt={svc.title}
+                  class="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+              <div class="w-full md:w-1/2">
+                <span class="text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest">
+                  {svc.duration}
+                </span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-black mt-2 mb-4 leading-tight">
+                  {svc.title}
+                </h2>
+                <p class="text-neutral-600 text-sm md:text-base leading-relaxed mb-6">
+                  {svc.description}
+                </p>
+
+                <div class="mb-8">
+                  <h3 class="text-xs font-extrabold text-black uppercase tracking-wider mb-3">
+                    Key Benefits
+                  </h3>
+                  <ul class="space-y-2">
+                    {svc.benefits.map((benefit) => (
+                      <li class="flex items-start gap-2.5 text-sm text-neutral-700">
+                        <span class="text-green-600 mt-1 font-bold">✓</span>
+                        <span>{benefit}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <button
+                  class="service-book-btn px-6 py-3 bg-black text-white text-xs font-semibold rounded-full hover:bg-neutral-800 transition-colors cursor-pointer shadow-md"
+                  data-service-name={svc.title}
+                >
+                  Book {svc.title}
+                </button>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </main>
+</Layout>

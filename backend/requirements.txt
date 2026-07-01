@@ -1,0 +1,20 @@
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-dotenv==1.0.0
+sqlalchemy==2.0.23
+aiosqlite==0.19.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+python-multipart==0.0.6
+email-validator==2.1.0
+reportlab==4.0.7
+jinja2==3.1.2          # for email templating
+httpx==0.25.2          # for webhook calls
+twilio==8.13.0         # optional, for WhatsApp
+reportlab==4.0.7
+google-api-python-client==2.108.0
+google-auth-httplib2==0.1.1
+google-auth-oauthlib==1.1.0
+httpx==0.25.2
+jinja2==3.1.2
+asyncpg==0.29.0

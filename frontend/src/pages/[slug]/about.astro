@@ -1,0 +1,340 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getClientBySlug } from "../../lib/api";
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+const client = await getClientBySlug(slug);
+if (!client) {
+  return Astro.redirect("/404");
+}
+const templateClient = { slug, ...client };
+---
+
+<Layout client={templateClient}>
+  <main class="min-h-screen bg-white relative pt-24 md:pt-28">
+    <div class="max-w-5xl mx-auto px-4 md:px-8 lg:px-12 py-16 md:py-4 relative">
+      <div class="text-center mb-16">
+        <span
+          class="text-xs font-extrabold text-neutral-400 uppercase tracking-widest"
+          >Who We Are</span
+        >
+        <h1
+          class="text-4xl md:text-6xl font-bold text-black mt-4 leading-tight"
+        >
+          About Our Clinic
+        </h1>
+      </div>
+
+      <!-- Trust Indicators -->
+      <div
+        class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-stone-50 p-6 md:p-8 rounded-2xl mb-16"
+      >
+        <div class="text-center py-4">
+          <div class="text-3xl md:text-4xl font-extrabold text-black">12+</div>
+          <div
+            class="text-[10px] uppercase font-bold text-neutral-500 tracking-wider mt-1"
+          >
+            Years Experience
+          </div>
+        </div>
+        <div class="text-center py-4">
+          <div class="text-3xl md:text-4xl font-extrabold text-black">
+            5000+
+          </div>
+          <div
+            class="text-[10px] uppercase font-bold text-neutral-500 tracking-wider mt-1"
+          >
+            Happy Patients
+          </div>
+        </div>
+        <div class="text-center py-4 border-t border-neutral-200/60 pt-4">
+          <div class="text-3xl md:text-4xl font-extrabold text-black">15+</div>
+          <div
+            class="text-[10px] uppercase font-bold text-neutral-500 tracking-wider mt-1"
+          >
+            Dental Services
+          </div>
+        </div>
+        <div class="text-center py-4 border-t border-neutral-200/60 pt-4">
+          <div class="text-3xl md:text-4xl font-extrabold text-black">4.9</div>
+          <div
+            class="text-[10px] uppercase font-bold text-neutral-500 tracking-wider mt-1"
+          >
+            Average Rating
+          </div>
+        </div>
+      </div>
+
+      <!-- Story -->
+      <div class="mb-16">
+        <h2
+          class="text-xs font-extrabold text-black uppercase tracking-wider mb-4"
+        >
+          Our Story
+        </h2>
+        <p
+          class="text-neutral-600 text-sm md:text-base leading-relaxed mb-4 max-w-3xl"
+        >
+          Founded in 2014, Dental Health clinic was built on a simple premise:
+          healthcare should combine clinical perfection with a premium,
+          stress-free patient experience.
+        </p>
+        <p
+          class="text-neutral-600 text-sm md:text-base leading-relaxed max-w-3xl"
+        >
+          Located in West New York, our state-of-the-art office houses
+          cutting-edge technologies that streamline procedures. Under the
+          leadership of Dr. Eleanor Vance, we ensure every treatment is
+          comfortable, secure, and tailored to individual aesthetic goals.
+        </p>
+      </div>
+
+      <!-- Mission & Vision -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+        <div class="border border-neutral-100 p-6 rounded-xl">
+          <h3
+            class="text-sm font-extrabold text-black mb-3 uppercase tracking-wide"
+          >
+            Our Mission
+          </h3>
+          <p class="text-neutral-600 text-sm md:text-base leading-relaxed">
+            To provide compassionate, premium oral healthcare using advanced
+            technologies, empowering patients with beautiful smiles.
+          </p>
+        </div>
+        <div class="border border-neutral-100 p-6 rounded-xl">
+          <h3
+            class="text-sm font-extrabold text-black mb-3 uppercase tracking-wide"
+          >
+            Our Vision
+          </h3>
+          <p class="text-neutral-600 text-sm md:text-base leading-relaxed">
+            To be the absolute benchmark of dental excellence, combining
+            pain-free technology with aesthetic artistry.
+          </p>
+        </div>
+      </div>
+
+      <!-- Clinic Values -->
+      <div class="mb-16">
+        <h2
+          class="text-xs font-extrabold text-black uppercase tracking-wider mb-6"
+        >
+          Clinic Values
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="flex items-start gap-3">
+            <span class="text-lg mt-0.5">✦</span>
+            <div>
+              <h3 class="text-sm font-bold text-black">Clinical Excellence</h3>
+              <p class="text-neutral-500 text-xs mt-1 leading-relaxed">
+                Strict sterilization, continuous expert training, and
+                board-certified methods.
+              </p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="text-lg mt-0.5">✦</span>
+            <div>
+              <h3 class="text-sm font-bold text-black">Empathetic Care</h3>
+              <p class="text-neutral-500 text-xs mt-1 leading-relaxed">
+                We cater specifically to dental anxiety, providing tranquil
+                environments.
+              </p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="text-lg mt-0.5">✦</span>
+            <div>
+              <h3 class="text-sm font-bold text-black">
+                Technological Leadership
+              </h3>
+              <p class="text-neutral-500 text-xs mt-1 leading-relaxed">
+                Utilizing premium 3D intraoral scanners, laser tools, and
+                computer-guided implants.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="border-t border-neutral-100 pt-12">
+        <h2
+          class="text-xs font-extrabold text-black uppercase tracking-wider mb-8"
+        >
+          Timeline of Growth
+        </h2>
+        <div class="relative border-l border-neutral-200 ml-2 pl-8 space-y-10">
+          <div class="relative">
+            <span
+              class="absolute -left-[30px] top-1.5 w-2.5 h-2.5 rounded-full bg-black ring-4 ring-white"
+            ></span>
+            <div class="text-xs font-bold text-black">2014</div>
+            <h3 class="text-sm font-semibold text-neutral-800 mt-0.5">
+              Clinic Founded
+            </h3>
+            <p class="text-neutral-500 text-xs mt-0.5 leading-relaxed">
+              Opened in West New York with two treatment rooms and Dr. Eleanor
+              Vance.
+            </p>
+          </div>
+          <div class="relative">
+            <span
+              class="absolute -left-[30px] top-1.5 w-2.5 h-2.5 rounded-full bg-black ring-4 ring-white"
+            ></span>
+            <div class="text-xs font-bold text-black">2018</div>
+            <h3 class="text-sm font-semibold text-neutral-800 mt-0.5">
+              Facility Expansion
+            </h3>
+            <p class="text-neutral-500 text-xs mt-0.5 leading-relaxed">
+              Expanded to five treatment suites, installing CAD/CAM milling and
+              microscopic units.
+            </p>
+          </div>
+          <div class="relative">
+            <span
+              class="absolute -left-[30px] top-1.5 w-2.5 h-2.5 rounded-full bg-black ring-4 ring-white"
+            ></span>
+            <div class="text-xs font-bold text-black">2022</div>
+            <h3 class="text-sm font-semibold text-neutral-800 mt-0.5">
+              Dr. Marcus Thorne Joins
+            </h3>
+            <p class="text-neutral-500 text-xs mt-0.5 leading-relaxed">
+              Established a dedicated computer-guided oral implantology and
+              surgery wing.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonials -->
+      <div class="border-t border-neutral-100 pt-12">
+        <h2
+          class="text-xs font-extrabold text-black uppercase tracking-wider mb-8"
+        >
+          Patient Testimonials
+        </h2>
+        <div
+          class="relative bg-neutral-50 p-6 md:p-8 rounded-2xl overflow-hidden h-52 md:h-44 flex flex-col justify-between"
+        >
+          <div id="testimonials-container" class="relative flex-1">
+            <div
+              class="testimonial-slide absolute inset-0 transition-opacity duration-500 flex flex-col justify-between opacity-100 z-10"
+              data-slide-index="0"
+            >
+              <p class="text-neutral-700 italic text-sm leading-relaxed">
+                "The smile makeover completely changed my life. Dr. Eleanor
+                Vance is an absolute artist! The veneers look incredibly
+                natural, and I can't stop smiling."
+              </p>
+              <div class="flex items-center justify-between mt-4">
+                <div>
+                  <h5 class="text-xs font-bold text-black">Jessica Miller</h5>
+                  <span class="text-[9px] text-neutral-400 font-semibold"
+                    >Hoboken, NJ</span
+                  >
+                </div>
+                <span class="text-xs font-bold text-amber-500">5.0 ★★★★★</span>
+              </div>
+            </div>
+            <div
+              class="testimonial-slide absolute inset-0 transition-opacity duration-500 flex flex-col justify-between opacity-0 z-0"
+              data-slide-index="1"
+            >
+              <p class="text-neutral-700 italic text-sm leading-relaxed">
+                "I was extremely anxious about getting a dental implant. Dr.
+                Thorne made the entire surgical procedure painless and
+                straightforward. Truly state-of-the-art care."
+              </p>
+              <div class="flex items-center justify-between mt-4">
+                <div>
+                  <h5 class="text-xs font-bold text-black">David K. Vance</h5>
+                  <span class="text-[9px] text-neutral-400 font-semibold"
+                    >Jersey City, NJ</span
+                  >
+                </div>
+                <span class="text-xs font-bold text-amber-500">5.0 ★★★★★</span>
+              </div>
+            </div>
+            <div
+              class="testimonial-slide absolute inset-0 transition-opacity duration-500 flex flex-col justify-between opacity-0 z-0"
+              data-slide-index="2"
+            >
+              <p class="text-neutral-700 italic text-sm leading-relaxed">
+                "A beautiful, premium clinic with incredibly friendly staff and
+                modern equipment. My laser teeth whitening was fast,
+                comfortable, and the results are unbelievable!"
+              </p>
+              <div class="flex items-center justify-between mt-4">
+                <div>
+                  <h5 class="text-xs font-bold text-black">Amanda Rosales</h5>
+                  <span class="text-[9px] text-neutral-400 font-semibold"
+                    >Manhattan, NY</span
+                  >
+                </div>
+                <span class="text-xs font-bold text-amber-500">5.0 ★★★★★</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-2 mt-4 shrink-0">
+            <button
+              id="prev-test"
+              class="w-8 h-8 rounded-full border border-neutral-200 flex items-center justify-center bg-white hover:bg-black hover:text-white transition-colors cursor-pointer"
+              aria-label="Previous review">‹</button
+            >
+            <button
+              id="next-test"
+              class="w-8 h-8 rounded-full border border-neutral-200 flex items-center justify-center bg-white hover:bg-black hover:text-white transition-colors cursor-pointer"
+              aria-label="Next review">›</button
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<script>
+  function setupTestimonials() {
+    const prevBtn = document.getElementById("prev-test");
+    const nextBtn = document.getElementById("next-test");
+    const slides = document.querySelectorAll(".testimonial-slide");
+    if (!slides.length) return;
+
+    let currentIndex = 0;
+
+    function showSlide(index) {
+      if (index < 0) index = slides.length - 1;
+      if (index >= slides.length) index = 0;
+
+      slides.forEach((slide, idx) => {
+        if (idx === index) {
+          slide.classList.remove("opacity-0", "z-0");
+          slide.classList.add("opacity-100", "z-10");
+        } else {
+          slide.classList.remove("opacity-100", "z-10");
+          slide.classList.add("opacity-0", "z-0");
+        }
+      });
+
+      currentIndex = index;
+    }
+
+    prevBtn?.addEventListener("click", () => showSlide(currentIndex - 1));
+    nextBtn?.addEventListener("click", () => showSlide(currentIndex + 1));
+
+    setInterval(() => {
+      showSlide(currentIndex + 1);
+    }, 6000);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setupTestimonials);
+  } else {
+    setupTestimonials();
+  }
+</script>

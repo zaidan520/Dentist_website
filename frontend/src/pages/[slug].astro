@@ -1,0 +1,45 @@
+---
+// src/pages/[slug].astro
+import { getClientBySlug } from '../lib/api';
+import DentistTemplate from '../components/templates/Dentist.astro';
+
+export const prerender = false; // SSR — rendered on each request
+
+const { slug } = Astro.params;
+const client = await getClientBySlug(slug);
+
+if (!client) {
+  return Astro.redirect('/404');
+}
+
+// Map API fields to the shape the template understands.
+// Add more mappings here as your API grows.
+const templateClient = {
+  slug:           slug,
+  business_name:  client.business_name,
+  city:           client.city,
+  state:          client.state,
+  phone:          client.phone,
+  tagline:        client.tagline,
+  feature_bars:   client.feature_bars,        // string[] | undefined
+  hero_image:     client.hero_image,          // URL | undefined
+  gallery_image:  client.gallery_image,       // URL | undefined
+  section3_img1:  client.section3_img1,       // URL | undefined
+  section3_img2:  client.section3_img2,       // URL | undefined
+  section3_bg:    client.section3_bg,         // URL | undefined
+  services:       client.services,            // service[] | undefined
+  // Footer fields
+  description:    client.description,
+  email:          client.email,
+  address:        client.address,
+  zip:            client.zip,
+  google_maps_url:       client.google_maps_url,
+  google_maps_embed_url: client.google_maps_embed_url,
+  facebook_url:   client.facebook_url,
+  hours_weekday:  client.hours_weekday,
+  hours_saturday: client.hours_saturday,
+  hours_sunday:   client.hours_sunday,
+};
+---
+
+<DentistTemplate client={templateClient} />

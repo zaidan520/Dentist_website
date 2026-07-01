@@ -1,0 +1,56 @@
+---
+---
+<div id="splash-screen" class="fixed inset-0 bg-white z-[100] flex items-end justify-start transition-opacity duration-700 pointer-events-auto select-none">
+  <div class="text-7xl md:text-9xl font-bold tabular-nums p-6 md:p-10 leading-none text-black">
+    <span id="splash-counter">0</span>
+  </div>
+</div>
+
+<script>
+  function runSplash() {
+    const splash = document.getElementById('splash-screen');
+    const counter = document.getElementById('splash-counter');
+    if (!splash || !counter) return;
+
+    const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
+    if (hasSeenSplash) {
+      splash.remove();
+      document.body.style.overflow = '';
+      document.dispatchEvent(new CustomEvent('splash-complete'));
+      return;
+    }
+
+    sessionStorage.setItem('hasSeenSplash', 'true');
+    document.body.style.overflow = 'hidden';
+
+    let count = 0;
+    const duration = 1500;
+    const steps = 100;
+    const stepTime = duration / steps;
+
+    const timer = setInterval(() => {
+      count++;
+      counter.textContent = String(count);
+
+      if (count >= 100) {
+        clearInterval(timer);
+        
+        setTimeout(() => {
+          splash.classList.add('opacity-0', 'pointer-events-none');
+          
+          setTimeout(() => {
+            splash.remove();
+            document.body.style.overflow = '';
+            document.dispatchEvent(new CustomEvent('splash-complete'));
+          }, 700);
+        }, 150);
+      }
+    }, stepTime);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', runSplash);
+  } else {
+    runSplash();
+  }
+</script>

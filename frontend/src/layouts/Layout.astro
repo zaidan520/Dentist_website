@@ -1,0 +1,239 @@
+---
+import '../styles/global.css';
+import DrawersContainer from '../components/DrawersContainer.astro';
+import Footer from '../components/Footer.astro';
+import Navbar from '../components/Navbar.astro';
+
+interface Props {
+  client?: Record<string, any>;
+}
+
+const { client } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="generator" content={Astro.generator} />
+		
+		<!-- SEO Meta Tags -->
+		<title>{client?.business_name ?? 'Dental Health'} - Quality Healthcare</title>
+		<meta name="description" content={client?.description ?? "Experience premium dental care. From smile makeovers and dental veneers to implant dentistry, our expert team utilizes advanced technology in a comfortable environment."} />
+		<meta name="robots" content="index, follow" />
+		
+		<!-- Open Sauce One Fonts -->
+		<link href="https://db.onlinewebfonts.com/c/1cd1e7d71e048159076fd90b39846902?family=Open+Sauce+One" rel="stylesheet" type="text/css"/>
+		<link href="https://db.onlinewebfonts.com/c/42acf9aa4a6dc2f2886a3f682e337ead?family=Open+Sauce+One+Bold" rel="stylesheet" type="text/css"/>
+	</head>
+	<body class="bg-white text-black selection:bg-neutral-200 antialiased">
+		<Navbar client={client} />
+	<slot />
+    <DrawersContainer />
+    <Footer client={client} />
+
+    <script>
+      // Global booking button handler (works on all pages)
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.service-book-btn');
+        if (btn) {
+          const serviceName = btn.getAttribute('data-service-name');
+          document.dispatchEvent(new CustomEvent('open-drawer', { detail: { target: 'booking' } }));
+          const serviceSelect = document.getElementById('book-service');
+          if (serviceSelect && serviceName) {
+            setTimeout(() => {
+              serviceSelect.value = serviceName;
+              const errEl = document.getElementById('error-service');
+              errEl?.classList.add('hidden');
+            }, 150);
+          }
+        }
+      });
+
+      // Global booking form setup
+      const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:8000' : '';
+
+      function setupGlobalBookingForm() {
+        const bookingForm = document.getElementById('booking-form') as HTMLFormElement | null;
+        if (!bookingForm) return;
+
+        const bookingSuccess = document.getElementById('booking-success');
+        const submitBtn = document.getElementById('book-submit-btn') as HTMLButtonElement | null;
+        const btnText = document.getElementById('submit-btn-text');
+        const btnSpinner = document.getElementById('submit-btn-spinner');
+        const errorSummary = document.getElementById('form-error-summary');
+        const dateInput = document.getElementById('book-date') as HTMLInputElement | null;
+
+        if (!bookingForm || !submitBtn || !dateInput) return;
+
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        dateInput.min = tomorrow.toISOString().split('T')[0];
+
+        const inputs = bookingForm.querySelectorAll('input, select, textarea');
+        inputs.forEach((input) => {
+          input.addEventListener('input', () => {
+            const errorEl = document.getElementById(`error-${input.id.replace('book-', '')}`);
+            errorEl?.classList.add('hidden');
+            errorSummary?.classList.add('hidden');
+          });
+          input.addEventListener('change', () => {
+            const errorEl = document.getElementById(`error-${input.id.replace('book-', '')}`);
+            errorEl?.classList.add('hidden');
+            errorSummary?.classList.add('hidden');
+          });
+        });
+
+        function validateForm(): boolean {
+          let isValid = true;
+          const nameInput = document.getElementById('book-name') as HTMLInputElement | null;
+          const phoneInput = document.getElementById('book-phone') as HTMLInputElement | null;
+          const emailInput = document.getElementById('book-email') as HTMLInputElement | null;
+          const serviceSelect = document.getElementById('book-service') as HTMLSelectElement | null;
+          const timeSelect = document.getElementById('book-time') as HTMLSelectElement | null;
+
+          const nameVal = nameInput?.value?.trim() || '';
+          const phoneVal = phoneInput?.value?.trim() || '';
+          const emailVal = emailInput?.value?.trim() || '';
+          const serviceVal = serviceSelect?.value || '';
+          const dateVal = dateInput.value;
+          const timeVal = timeSelect?.value || '';
+
+          if (!nameVal) { document.getElementById('error-name')?.classList.remove('hidden'); isValid = false; }
+          const phoneRegex = /^[\d\s()+-]{8,20}$/;
+          if (!phoneVal || !phoneRegex.test(phoneVal)) { document.getElementById('error-phone')?.classList.remove('hidden'); isValid = false; }
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailVal || !emailRegex.test(emailVal)) { document.getElementById('error-email')?.classList.remove('hidden'); isValid = false; }
+          if (!serviceVal) { document.getElementById('error-service')?.classList.remove('hidden'); isValid = false; }
+          if (!dateVal) {
+            document.getElementById('error-date')?.classList.remove('hidden');
+            isValid = false;
+          } else {
+            const selectedDate = new Date(dateVal);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            selectedDate.setHours(0, 0, 0, 0);
+            if (selectedDate <= today) { document.getElementById('error-date')?.classList.remove('hidden'); isValid = false; }
+          }
+          if (!timeVal) { document.getElementById('error-time')?.classList.remove('hidden'); isValid = false; }
+          return isValid;
+        }
+
+        bookingForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          if (!validateForm()) {
+            errorSummary?.classList.remove('hidden');
+            return;
+          }
+
+          const formData = new FormData(bookingForm);
+          const payload = {
+            name: formData.get('name')?.toString().trim() || '',
+            phone: formData.get('phone')?.toString().trim() || '',
+            email: formData.get('email')?.toString().trim() || '',
+            service: formData.get('service')?.toString() || '',
+            date: formData.get('date')?.toString() || '',
+            time: formData.get('time')?.toString() || '',
+            notes: formData.get('notes')?.toString().trim() || ''
+          };
+
+          submitBtn.disabled = true;
+          btnText?.classList.add('hidden');
+          btnSpinner?.classList.remove('hidden');
+          errorSummary?.classList.add('hidden');
+
+          try {
+            const res = await fetch(`${API_URL}/api/appointments`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+              import('canvas-confetti').then((mod) => {
+                mod.default({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+              }).catch(() => {});
+
+              bookingForm.classList.add('hidden');
+              bookingSuccess?.classList.remove('hidden');
+
+              const summaryName = document.getElementById('summary-name');
+              const summaryService = document.getElementById('summary-service');
+              const summaryDate = document.getElementById('summary-date');
+              const summaryTime = document.getElementById('summary-time');
+
+              if (summaryName) summaryName.textContent = payload.name;
+              if (summaryService) summaryService.textContent = payload.service;
+              if (summaryDate) summaryDate.textContent = payload.date;
+              if (summaryTime) summaryTime.textContent = payload.time;
+            } else {
+              throw new Error(data.message || 'Server error');
+            }
+          } catch (err) {
+            console.error('Submit booking failed:', err);
+            errorSummary?.classList.remove('hidden');
+            if (errorSummary) {
+              errorSummary.textContent = 'Unable to process appointment. Please try again.';
+            }
+          } finally {
+            submitBtn.disabled = false;
+            btnText?.classList.remove('hidden');
+            btnSpinner?.classList.add('hidden');
+          }
+        });
+
+        const downloadPdfBtn = document.getElementById('download-pdf-btn');
+        downloadPdfBtn?.addEventListener('click', () => {
+          const formData = new FormData(bookingForm);
+          const payload = {
+            name: formData.get('name')?.toString().trim() || '',
+            phone: formData.get('phone')?.toString().trim() || '',
+            email: formData.get('email')?.toString().trim() || '',
+            service: formData.get('service')?.toString() || '',
+            date: formData.get('date')?.toString() || '',
+            time: formData.get('time')?.toString() || '',
+            notes: formData.get('notes')?.toString().trim() || ''
+          };
+          if (!payload.name || !payload.service) return;
+          const queryParams = new URLSearchParams(payload).toString();
+          window.location.href = `${API_URL}/api/appointments/download-pdf?${queryParams}`;
+        });
+
+        const returnHomeBtn = document.getElementById('return-home-btn');
+        returnHomeBtn?.addEventListener('click', () => {
+          document.dispatchEvent(new CustomEvent('close-drawer', { detail: { target: 'booking' } }));
+          setTimeout(() => {
+            bookingForm.reset();
+            bookingForm.classList.remove('hidden');
+            bookingSuccess?.classList.add('hidden');
+          }, 5000);
+        });
+      }
+
+      // Initialize when drawer opens so form is ready
+      document.addEventListener('open-drawer', () => {
+        setTimeout(setupGlobalBookingForm, 200);
+      });
+
+      // Run once in case drawer is already open
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupGlobalBookingForm);
+      } else {
+        setupGlobalBookingForm();
+      }
+
+      // Smooth scroll for hash links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', (e) => {
+          e.preventDefault();
+          const target = document.querySelector(anchor.getAttribute('href') || '');
+          target?.scrollIntoView({ behavior: 'smooth' });
+        });
+      });
+    </script>
+</body>
+</html>
